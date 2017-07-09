@@ -259,25 +259,25 @@ end
 local t_uses = {}
 if tool_wear then
 	t_uses.pick_silver = 100
-	t_uses.hoe_silver = 300
-	t_uses.shovel_silver = 100
-	t_uses.axe_silver = 100
-	t_uses.sword_silver = 100
 	t_uses.pick_mithril = 200
+	t_uses.hoe_silver = 300
 	t_uses.hoe_mithril = 1000
+	t_uses.shovel_silver = 100
 	t_uses.shovel_mithril = 200
+	t_uses.axe_silver = 100
 	t_uses.axe_mithril = 200
+	t_uses.sword_silver = 100
 	t_uses.sword_mithril = 200
 else
 	t_uses.pick_silver = 0
-	t_uses.hoe_silver = 0
-	t_uses.shovel_silver = 0
-	t_uses.axe_silver = 0
-	t_uses.sword_silver = 0
 	t_uses.pick_mithril = 0
+	t_uses.hoe_silver = 0
 	t_uses.hoe_mithril = 0
+	t_uses.shovel_silver = 0
 	t_uses.shovel_mithril = 0
+	t_uses.axe_silver = 0
 	t_uses.axe_mithril = 0
+	t_uses.sword_silver = 0
 	t_uses.sword_mithril = 0
 end
 
