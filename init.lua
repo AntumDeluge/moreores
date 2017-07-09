@@ -91,6 +91,11 @@ local function add_ore(modname, description, mineral_name, oredef)
 	local item_base = tool_base .. mineral_name
 	local ingot = item_base .. "_ingot"
 	local lump_item = item_base .. "_lump"
+	
+	-- Use gold materials from 'default'
+	if mineral_name == "gold" then
+		ingot = "default:gold_ingot"
+	end
 
 	if oredef.makes.ore then
 		minetest.register_node(modname .. ":mineral_" .. mineral_name, {
@@ -175,11 +180,14 @@ local function add_ore(modname, description, mineral_name, oredef)
 		})
 	end
 
-	oredef.oredef.ore_type = "scatter"
-	oredef.oredef.ore = modname .. ":mineral_" .. mineral_name
-	oredef.oredef.wherein = "default:stone"
+	-- Gold ore is already defined in 'default'
+	if mineral_name ~= "gold" then
+		oredef.oredef.ore_type = "scatter"
+		oredef.oredef.ore = modname .. ":mineral_" .. mineral_name
+		oredef.oredef.wherein = "default:stone"
 
-	minetest.register_ore(oredef.oredef)
+		minetest.register_ore(oredef.oredef)
+	end
 
 	for tool_name, tooldef in pairs(oredef.tools) do
 		local tdef = {
@@ -252,6 +260,12 @@ local function add_ore(modname, description, mineral_name, oredef)
 		if use_frame then
 			frame.register(fulltool_name)
 		end
+		if oredef.makes.ingot or mineral_name == "gold" then
+			minetest.register_craft({
+				output = fulltool_name,
+				recipe = get_recipe(ingot, tool_name)
+			})
+		end
 	end
 end
 
@@ -259,25 +273,35 @@ end
 local t_uses = {}
 if tool_wear then
 	t_uses.pick_silver = 100
+	t_uses.pick_gold = 150
 	t_uses.pick_mithril = 200
 	t_uses.hoe_silver = 300
+	t_uses.hoe_gold = 750
 	t_uses.hoe_mithril = 1000
 	t_uses.shovel_silver = 100
+	t_uses.shovel_gold = 150
 	t_uses.shovel_mithril = 200
 	t_uses.axe_silver = 100
+	t_uses.axe_gold = 150
 	t_uses.axe_mithril = 200
 	t_uses.sword_silver = 100
+	t_uses.sword_gold = 150
 	t_uses.sword_mithril = 200
 else
 	t_uses.pick_silver = 0
+	t_uses.pick_gold = 0
 	t_uses.pick_mithril = 0
 	t_uses.hoe_silver = 0
+	t_uses.hoe_gold = 0
 	t_uses.hoe_mithril = 0
 	t_uses.shovel_silver = 0
+	t_uses.shovel_gold = 0
 	t_uses.shovel_mithril = 0
 	t_uses.axe_silver = 0
+	t_uses.axe_gold = 0
 	t_uses.axe_mithril = 0
 	t_uses.sword_silver = 0
+	t_uses.sword_gold = 0
 	t_uses.sword_mithril = 0
 end
 
@@ -314,6 +338,34 @@ local oredefs = {
 		},
 		full_punch_interval = 1.0,
 		damage_groups = {fleshy = 6},
+	},
+	gold = {
+		description = "Gold",
+		makes = {ore = false, block = false, lump = false, ingot = false, chest = false},
+		-- Gold ore is already defined in 'default'
+		oredef = {},
+		tools = {
+			pick = {
+				cracky = {times = {[1] = 2.45, [2] = 0.75, [3] = 0.50}, uses = t_uses.pick_gold, maxlevel= 1}
+			},
+			hoe = {
+				uses = t_uses.hoe_gold
+			},
+			shovel = {
+				crumbly = {times = {[1] = 0.90, [2] = 0.37, [3] = 0.23}, uses = t_uses.shovel_gold, maxlevel= 1}
+			},
+			axe = {
+				choppy = {times = {[1] = 2.10, [2] = 0.60, [3] = 0.47}, uses = t_uses.axe_gold, maxlevel= 1},
+				fleshy = {times = {[2] = 1.05, [3] = 0.45}, uses = t_uses.axe_gold, maxlevel= 1}
+			},
+			sword = {
+				fleshy = {times = {[2] = 0.67, [3] = 0.27}, uses = t_uses.sword_gold, maxlevel= 1},
+				snappy = {times = {[2] = 0.70, [3] = 0.27}, uses = t_uses.sword_gold, maxlevel= 1},
+				choppy = {times = {[3] = 0.72}, uses = t_uses.sword_gold, maxlevel= 0}
+			},
+		},
+		full_punch_interval = 0.90,
+		damage_groups = {fleshy = 7},
 	},
 	mithril = {
 		description = "Mithril",
