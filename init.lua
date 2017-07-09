@@ -83,6 +83,11 @@ local function add_ore(modname, description, mineral_name, oredef)
 	local ingot = item_base .. "_ingot"
 	local lump_item = item_base .. "_lump"
 
+	-- Use gold materials from 'default'
+	if mineral_name == "gold" then
+		ingot = "default:gold_ingot"
+	end
+
 	if oredef.makes.ore then
 		minetest.register_node(modname .. ":mineral_" .. mineral_name, {
 			description = S("@1 Ore", S(description)),
@@ -166,11 +171,14 @@ local function add_ore(modname, description, mineral_name, oredef)
 		})
 	end
 
-	oredef.oredef.ore_type = "scatter"
-	oredef.oredef.ore = modname .. ":mineral_" .. mineral_name
-	oredef.oredef.wherein = "default:stone"
+	-- Gold ore is already defined in 'default'
+	if mineral_name ~= "gold" then
+		oredef.oredef.ore_type = "scatter"
+		oredef.oredef.ore = modname .. ":mineral_" .. mineral_name
+		oredef.oredef.wherein = "default:stone"
 
-	minetest.register_ore(oredef.oredef)
+		minetest.register_ore(oredef.oredef)
+	end
 
 	for tool_name, tooldef in pairs(oredef.tools) do
 		local tdef = {
@@ -223,7 +231,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 		if tool_name ~= "hoe" then
 			minetest.register_tool(fulltool_name, tdef)
 
-			if oredef.makes.ingot then
+			if oredef.makes.ingot or mineral_name == "gold" then
 				minetest.register_craft({
 					output = fulltool_name,
 					recipe = get_recipe(ingot, tool_name)
@@ -279,6 +287,34 @@ local oredefs = {
 		},
 		full_punch_interval = 1.0,
 		damage_groups = {fleshy = 6},
+	},
+	gold = {
+		description = "Gold",
+		makes = {ore = false, block = false, lump = false, ingot = false, chest = false},
+		-- Gold ore is already defined in 'default'
+		oredef = {},
+		tools = {
+			pick = {
+				cracky = {times = {[1] = 2.45, [2] = 0.75, [3] = 0.50}, uses = 150, maxlevel= 1}
+			},
+			hoe = {
+				uses = 750
+			},
+			shovel = {
+				crumbly = {times = {[1] = 0.90, [2] = 0.37, [3] = 0.23}, uses = 150, maxlevel= 1}
+			},
+			axe = {
+				choppy = {times = {[1] = 2.10, [2] = 0.60, [3] = 0.47}, uses = 150, maxlevel= 1},
+				fleshy = {times = {[2] = 1.05, [3] = 0.45}, uses = 150, maxlevel= 1}
+			},
+			sword = {
+				fleshy = {times = {[2] = 0.67, [3] = 0.27}, uses = 150, maxlevel= 1},
+				snappy = {times = {[2] = 0.70, [3] = 0.27}, uses = 150, maxlevel= 1},
+				choppy = {times = {[3] = 0.72}, uses = 150, maxlevel= 0}
+			},
+		},
+		full_punch_interval = 0.90,
+		damage_groups = {fleshy = 7},
 	},
 	mithril = {
 		description = "Mithril",
